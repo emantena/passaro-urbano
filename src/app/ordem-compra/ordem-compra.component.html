@@ -1,0 +1,140 @@
+<div class="container">
+    <div *ngIf="itensPedido.length > 0; else carrinhoVazio">
+        <div class="ordem-compra" *ngIf="this.pedido === undefined">
+            <form novalidate [formGroup]="formulario" (ngSubmit)="confirmarCompra()">
+                <h5>Sua Compra</h5>
+                <hr />
+
+                <div class="form-row"
+                    style="background: #FAFAFA; padding: 20px; border-bottom: solid 1px #F0F0F0"
+                    *ngFor="let item of itensPedido"
+                >
+                    <div class="form-group col-sm-1">
+                        <img [src]="item.img.url" class="img-fluid">
+                    </div>
+                    <div class="form-group col-sm-6">
+                        {{ item.titulo }} <br />
+                        {{ item.descricao_oferta }}
+                    </div>
+
+                    <div>
+                        <div class="row">
+                            <div class="col">
+                                <button type="button" class="btn btn-link" (click)="diminuir(item)">-</button>
+                                {{ item.quantidade }}
+                                <button type="button" class="btn btn-link" (click)="aumentar(item)">+</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-sm-3 d-flex justify-content-end">
+                        {{ item.valor | currency:"BRL"}}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col d-flex justify-content-end">
+                        <h4>Total do pedido: {{ _carrinhoService.totalCarrinho() | currency: "BRL" }}</h4>
+                    </div>
+                </div>
+                <br />
+
+                <h5>Dados de entrega</h5>
+                <hr />
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <input type="text"
+                            class="form-control"
+                            placeholder="Endereço"
+                            autocomplete="off"
+                            formControlName="endereco"
+                        />
+                        <div *ngIf="formulario.get('endereco').invalid && (formulario.get('endereco').dirty || formulario.get('endereco').touched)">
+                            <small *ngIf="formulario.get('endereco').hasError('required')" class="text-danger">
+                                Informe o endereço
+                            </small>
+
+                            <small *ngIf="formulario.get('endereco').hasError('minlength')" class="text-danger">
+                                Endereço deve conter mais que 3 caracteres
+                            </small>
+
+                            <small *ngIf="formulario.get('endereco').hasError('maxLength')" class="text-danger">
+                                Endereço deve conter menos de 120 caracteres
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-2">
+                        <input type="text"
+                            class="form-control"
+                            placeholder="Número"
+                            autocomplete="off"
+                            formControlName="numero"
+                        />
+                        <div *ngIf="formulario.get('numero').invalid && (formulario.get('numero').dirty || formulario.get('numero').touched)">
+                            <small *ngIf="formulario.get('numero').hasError('required')" class="text-danger">
+                                Informe o número
+                            </small>
+
+                            <small *ngIf="formulario.get('numero').hasError('minlength')" class="text-danger">
+                                Número deve conter mais que 1 caractere
+                            </small>
+
+                            <small *ngIf="formulario.get('numero').hasError('maxlength')" class="text-danger">
+                                Número deve conter menos de 5 caracteres
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-4">
+                        <input type="text"
+                            class="form-control"
+                            placeholder="Complemento"
+                            autocomplete="off"
+                            name="complemento"
+                            formControlName="complemento"
+                        />
+                    </div>
+
+                </div>
+                <br />
+
+                <h5>Dados de pagamento</h5>
+                <hr />
+
+                <div class="form-row">
+
+                    <div class="form-group col-md-3">
+                        <select class="form-control" name="formaPagamento" required formControlName="formaPagamento">
+                            <option value="">Selecione uma opção</option>
+                            <option value="dinheiro">Dinheiro</option>
+                            <option value="debito">Débito</option>
+                        </select>
+                        <small *ngIf="formulario.get('formaPagamento').hasError('required') && (formulario.get('formaPagamento').dirty || formulario.get('formaPagamento').touched)" class="text-danger">
+                            Informe a forma de pagamento
+                        </small>
+                    </div>
+                </div>
+
+                <hr />
+                <button type="subbumit"
+                    class="btn btn-primary btn-lg"
+                    [disabled]="formulario.invalid"
+                >Cofirmar compra</button>
+            </form>
+        </div>
+    </div>
+
+    <ng-template #carrinhoVazio>
+        <h5>Sua Compra</h5>
+        <hr />
+        <div  class="form-row d-flex" style="background: #FAFAFA; padding: 20px; border-bottom: solid 1px #F0F0F0">
+            Seu carrinho esta vazio
+        </div>
+    </ng-template>
+
+    <div class="ordem-compra" *ngIf="this.pedido !== undefined && this.pedido.pedidoId !== undefined">
+        <app-ordem-compra-sucesso [pedidoId]="pedido.pedidoId"></app-ordem-compra-sucesso>
+    </div>
+</div>
